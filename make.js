@@ -361,6 +361,36 @@ target.bundle = function(args) {
   var srcFiles = builder.getWorkerSrcFiles('src/worker_loader.js');
   var WORKER_SRC_FILES = srcFiles.srcFiles;
 
+  // *** begin *** QL custom build
+  SHARED_SRC_FILES = [
+    'shared/util.js'
+  ];
+
+  MAIN_SRC_FILES = SHARED_SRC_FILES.concat([
+    'display/api.js'
+  ]);
+
+  var QLBuildFiles = [
+    'network',
+    'pdf_manager',
+    'core',
+    'obj',
+    'crypto',
+    'parser',
+    'stream',
+    'worker'
+  ]
+  .join('|');
+
+  var rQLBuildFiles = new RegExp('/(?:%).'.replace('%', QLBuildFiles));
+
+  WORKER_SRC_FILES = WORKER_SRC_FILES
+    .filter(function (file) {
+
+      return rQLBuildFiles.test(file);
+    });
+  // *** end *** QL custom build
+
   if (!defines.SINGLE_FILE) {
     // We want shared_src_files in both pdf.js and pdf.worker.js
     // unless it's being built in singlefile mode.
